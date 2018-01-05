@@ -5,10 +5,10 @@ include:
 {% set names = [salt.caasp_pillar.get('dashboard')] %}
 
 {% from '_macros/certs.jinja' import alt_names, certs with context %}
-{{ certs("ldap:" + grains['caasp_fqdn'],
+{{ certs("ldap:" + grains['host'],
          pillar['ssl']['ldap_crt'],
          pillar['ssl']['ldap_key'],
-         cn = grains['caasp_fqdn'],
+         cn = grains['host'],
          extra_alt_names = alt_names(names)) }}
 
 openldap_restart:

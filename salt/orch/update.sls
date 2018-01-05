@@ -140,6 +140,16 @@ pre-orchestration-migration:
     - require:
       - salt: {{ master_id }}-post-start-services
 
+# Remove the now defuct caasp_fqdn grain
+{{ master_id }}-remove-caasp-fqdn-grain:
+  salt.function:
+    - tgt: {{ master_id }}
+    - name: grains.delkey
+    - arg:
+      - caasp_fqdn
+    - require:
+      - salt: {{ master_id }}-reboot-needed-grain
+
 # Ensure the node is marked as finished upgrading
 {{ master_id }}-remove-update-grain:
   salt.function:
@@ -149,7 +159,7 @@ pre-orchestration-migration:
       - update_in_progress
       - false
     - require:
-      - salt: {{ master_id }}-reboot-needed-grain
+      - salt: {{ master_id }}-remove-caasp-fqdn-grain
 
 {% endfor %}
 
@@ -241,6 +251,16 @@ pre-orchestration-migration:
     - require:
       - salt: {{ worker_id }}-update-post-start-services
 
+# Remove the now defuct caasp_fqdn grain
+{{ worker_id }}-remove-caasp-fqdn-grain:
+  salt.function:
+    - tgt: {{ worker_id }}
+    - name: grains.delkey
+    - arg:
+      - caasp_fqdn
+    - require:
+      - salt: {{ worker_id }}-update-reboot-needed-grain
+
 # Ensure the node is marked as finished upgrading
 {{ worker_id }}-remove-update-grain:
   salt.function:
@@ -250,7 +270,7 @@ pre-orchestration-migration:
       - update_in_progress
       - false
     - require:
-      - salt: {{ worker_id }}-update-reboot-needed-grain
+      - salt: {{ worker_id }}-remove-caasp-fqdn-grain
 
 {% endfor %}
 

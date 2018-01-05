@@ -25,8 +25,8 @@ listen kubernetes-master
         default-server inter 10s fall 3
         balance roundrobin
 
-{%- for minion_id, _ in salt['mine.get']('roles:kube-master', 'network.interfaces', 'grain').items() %}
-        server master-{{ minion_id }} {{ minion_id }}.{{ pillar['internal_infra_domain'] }}:{{ pillar['api']['int_ssl_port'] }} check
+{%- for minion_id, host in salt['mine.get']('roles:kube-master', 'host', 'grain').items() %}
+        server master-{{ minion_id }} {{ host }}:{{ pillar['api']['int_ssl_port'] }} check
 {% endfor -%}
 
 {%- if "admin" in salt['grains.get']('roles', []) %}
@@ -37,8 +37,8 @@ listen kubernetes-dex
         default-server inter 10s fall 3
         balance roundrobin
 
-{%- for minion_id, _ in salt['mine.get']('roles:kube-master', 'network.interfaces', 'grain').items() %}
-        server master-{{ minion_id }} {{ minion_id }}.{{ pillar['internal_infra_domain'] }}:32000 check
+{%- for minion_id, host in salt['mine.get']('roles:kube-master', 'host', 'grain').items() %}
+        server master-{{ minion_id }} {{ host }}:32000 check
 {% endfor %}
 
 listen velum
